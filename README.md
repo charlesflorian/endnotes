@@ -35,8 +35,6 @@ and to add those to the start of the endnote reference.
 
 `-n num` - modify the number of words to keep leading up to the reference
 
-`--nopretext` - Does not add the pretext above.
-
 `-o file` - choose an output file. The default is `file-endnotes.docx` if the input is `file.docx`.
 
 `--chapter num` - Specialized. This will select only the references that are in Chapter `num`. Note that this is very article-specific, and probably won't work for yours.
