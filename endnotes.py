@@ -51,6 +51,9 @@ def get_previous_words(ix, runs, num_prev):
     Collects the words that lead up to a reference from the main text. Does some very basic
     selection to arrange to choose e.g. the start of a sentence, or quote
     """
+    if num_prev <= 0:
+        return ""
+
     pre_text = "".join([r.text for r in runs[: ix + 1]]).split()
     num_words = min(num_prev, len(pre_text))
 
@@ -103,7 +106,6 @@ def main(argv):
     )
     parser.add_argument("-o", "--output", default="", help="Output file")
     parser.add_argument("--chapter", type=int, help="Load only refs from chapter")
-    parser.add_argument("--nopretext", action="store_true")
     parser.add_argument("--sort", action="store_true")
 
     args = parser.parse_args(argv)
@@ -142,15 +144,14 @@ def main(argv):
 
         pre_text = get_previous_words(ix, runs, args.n)
 
-        added_prefix = False
         for p2 in notes[id].paragraphs:
             np = d.add_paragraph()
 
-            if not args.nopretext and len(p2.text.strip()) > 0 and not added_prefix:
+            if len(pre_text) > 0 and len(p2.text.strip()) > 0:
                 nr = np.add_run()
                 nr.add_text("“" + pre_text + "”")
                 nr.bold = True
-                added_prefix = True
+                pre_text = ""  # Reset it so we only add it once
 
             for run in p2.runs:
                 nr = np.add_run()
