@@ -98,6 +98,41 @@ def ref_to_note(notes):
     return f
 
 
+def copy_run_style(from_run, to_run, ignore=[], keep=[]):
+    """
+    Copies the style data from one run to another
+
+    If you pass a list of styles to keep it ignore, it will use those lists to decide what to copy over i.e.
+    it will copy keep - ignore.
+    """
+
+    copy_styles = [
+        "all_caps",
+        "bold",
+        "complex_script",
+        "cs_bold",
+        "cs_italic",
+        "double_strike",
+        "emboss",
+        "hidden",
+        "italic",
+        "imprint",
+        "math",
+        "no_proof",
+        "outline",
+        "rtl",
+        "shadow",
+        "small_caps",
+        "snap_to_grid",
+        "spec_vanish",
+        "strike",
+    ]
+    if keep:
+        copy_styles = filter(lambda x: x in keep, copy_styles)
+    for style in filter(lambda x: x not in ignore, copy_styles):
+        setattr(to_run, style, getattr(from_run, style))
+
+
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("document", help="Document to load")
@@ -156,16 +191,7 @@ def main(argv):
             for run in p2.runs:
                 nr = np.add_run()
                 nr.add_text(run.text)
-                nr.bold = run.bold
-                nr.italic = run.italic
-                nr.strike = run.strike
-                nr.shadow = run.shadow
-                nr.all_caps = run.all_caps
-                nr.emboss = run.emboss
-                nr.double_strike = run.double_strike
-                nr.hidden = run.hidden
-                nr.outline = run.outline
-                nr.imprint = run.imprint
+                copy_run_style(run, nr, keep=["italic"])
 
         note_text = "".join(map(lambda x: x.text, notes[id].paragraphs))
 
